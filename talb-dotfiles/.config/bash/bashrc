@@ -1,0 +1,106 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+# don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth
+shopt -s histappend
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# update LINES and COLUMNS after each command
+shopt -s checkwinsize
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# sunset-orange colours for less and man pages
+[ -r "$CFG/less/sunset-orange.sh" ] && . "$CFG/less/sunset-orange.sh"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# sunset-orange prompt: user@host in gold, path in orange
+case "$TERM" in
+    xterm-color|*-256color)
+        PS1='${debian_chroot:+($debian_chroot)}\[\033[1;38;5;220m\]\u@\h\[\033[00m\]:\[\033[1;38;5;208m\]\w\[\033[00m\]\$ ' ;;
+    *)
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ ' ;;
+esac
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r "$CFG/dircolors/dircolors" && eval "$(dircolors -b "$CFG/dircolors/dircolors")" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias vi='nvim'
+alias context='kubectl config current-context'
+alias cc='. ~/scripts/clear-context.sh'
+alias mega='export KUBECONFIG=~/config/mega-config.yaml; kubectl config current-context'
+alias gent-d='k9s --command pods --namespace pasx --context azr-avw-gentpasxblue-development'
+alias gent-p='k9s --command pods --namespace pasx --context azr-avw-gentpasxblue-production'
+alias gent-q='k9s --command pods --namespace pasx --context azr-avw-gentpasxblue-qa'
+alias gent-t='k9s --command pods --namespace pasx --context azr-avw-gentpasxblue-training'
+alias schaff-d='k9s --command pods --namespace pasx --context azr-haj-schaffpasxblue-development'
+alias schaff-p='k9s --command pods --namespace pasx --context azr-haj-schaffpasxblue-production'
+alias schaff-q='k9s --command pods --namespace pasx --context azr-haj-schaffpasxblue-qa'
+alias galway-d='k9s --command pods --namespace pasx --context azr-hbe-galwayaks-development'
+alias galway-q='k9s --command pods --namespace pasx --context azr-hbe-galwayaks-qa'
+alias galway-t='k9s --command pods --namespace pasx --context azr-hbe-galwayaks-training'
+alias infra-d='k9s --command pods --namespace pasx --context azr-hbe-infrapasxaks-development'
+alias limerick-d='k9s --command pods --namespace pasx --context azr-hbe-limerickaks-development'
+alias scarriff-d='k9s --command pods --namespace pasx --context azr-hbe-scarriffaks-development'
+alias geel-d='k9s --command pods --namespace pasx --context azr-hcc-geelpasxblue-development'
+alias geel-p='k9s --command pods --namespace pasx --context azr-hcc-geelpasxblue-production'
+alias geel-q='k9s --command pods --namespace pasx --context azr-hcc-geelpasxblue-qa'
+alias raritan-d='k9s --command pods --namespace pasx --context azr-iba-raritanaks-development'
+alias raritan-p='k9s --command pods --namespace pasx --context azr-iba-raritanaks-production'
+alias raritan-q='k9s --command pods --namespace pasx --context azr-iba-raritanaks-qa'
+alias raritan-t='k9s --command pods --namespace pasx --context azr-iba-raritanaks-training'
+alias latina-d='k9s --command pods --namespace pasx --context azr-idm-latinaaks-development'
+alias latina-q='k9s --command pods --namespace pasx --context azr-idm-latinaaks-qa'
+alias bionc-d='k9s --command pods --namespace pasx --context azr-igd-bioncaks-development'
+alias bionc-q='k9s --command pods --namespace pasx --context azr-igd-bioncaks-qa'
+alias copilit='cd ~/copilot-projects && copilot'
+alias adminacc='~/scripts/show_admin_pwd.sh'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+[ -f "$CFG/pam/env" ] && . "$CFG/pam/env"
+unset CFG

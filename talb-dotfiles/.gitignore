@@ -1,0 +1,9 @@
+# editor and backup cruft
+*.swp
+*.swo
+*~
+*.bak-*
+.DS_Store
+
+# never commit git credential-store files
+.config/git/credentials
