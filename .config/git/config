@@ -1,0 +1,10 @@
+[user]
+	name = mtalbot2
+	email = mtalbot2@its.jnj.com
+	signingkey = a5c33665ea8774e4
+[credential]
+	helper = store
+[commit]
+	gpgsign = true
+[include]
+	path = ~/.config/git/sunset-orange.gitconfig
